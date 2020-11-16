@@ -3,6 +3,7 @@ file: .asciiz "TablaIni.txt"
 buffer: .space 1024
 .text
 
+
 #abrir archivo 
 li $v0, 13 #numero servicio para abrir archivo
 la $a0, file #hacer el load del nombre del archivo en a0
