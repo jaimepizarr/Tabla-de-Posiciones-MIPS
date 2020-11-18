@@ -44,10 +44,6 @@ while:
 	add $t6, $t0, $t1
 	lb $t7, 0($t6)
 
-#	imprimir char
-#	li $v0, 11
-#	move $a0, $t8
-#	syscall 
 	
 	bne $t7, $t2, then
 	addi $t0,$t0,1
@@ -59,13 +55,20 @@ while:
 	
 	
 whileR:
-	
 	slti $t5, $t0, 1024
 	beq $t5, $zero, exit
 	
+	
 	add $t6, $t0, $t1
 	lb $t7, 0($t6)
+
+	#imprimir char
+	li $v0, 11
+	move $a0, $t7
+	syscall 
 	
+	addi $t0, $t0, 1	
+	j whileR	
 		
 
 #imprimir el archivo
