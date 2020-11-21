@@ -127,6 +127,125 @@ whileR:
                     jal obtenerCampo
                     
                     j whileSalto
+                    
+
+#def funcion(B, j, i, iComas):
+# B, $a0
+# j, $s5
+# iComas $t5
+# i $s4
+# buffer $s0
+#posicion i del buffer i+buffer
+obtenerCampo:
+#limpiar cantidades 
+    
+    move  $s6, $a0
+
+whileComa:    
+
+
+    lb $t1, 0($s4) #A[i] 
+    
+    beq $t1, $s1, retornar #!= \n
+    bne $t1, $s2, thenObtencion # != ,
+    
+    addi $s4, $s4,1  #i+=1 En caso de que sea ","
+
+    retornar:    
+    addi $t5, $t5, 1 #iComas+=1
+    jr $ra
+
+
+    thenObtencion:
+        
+        add $t9, $s6, $s5 #B[j]
+        sb $t1, 0($t9)
+        addi $s5, $s5, 1
+        addi $s4, $s4, 1 #i+=1
+                      
+        j whileComa
+
+
+
+exit:
+
+
+
+
+#Cerrar el archivo
+li $v0, 16
+move $a0, $s0
+syscall
+
+
+li $s1, 52 #longitud de la fila
+add $s4, $zero, $zero #i
+la $s2, matriz
+
+whilePrueba:
+    slti $t1, $s4, 832
+    bne $t1, $zero, recorrer
+    j exitPrueba
+
+    recorrer:
+
+        div $s4, $s1
+        mfhi $t2
+        bne $t2, 0, elsePrueba
+            jal RecorrerPalabra
+	    j whilePrueba
+        elsePrueba:
+            jal RecorrerNumero
+            j whilePrueba
+        
+            
+            
+            
+RecorrerNumero:
+
+    li $t2, 0
+    add $t2, $s2, $s4
+
+    lw $t3, 0($t2)
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+
+    addi $s4, $s4, 4
+
+    jr $ra
+
+
+
+
+RecorrerPalabra:
+
+    li $t3, 0 #j
+    whilemenor20:
+        slti $t4, $t3, 20
+        beq $t4, 1, imprimirChar
+            jr $ra
+
+        imprimirChar:
+            add $t5, $s2, $s4
+
+            lb $t5, 0($t5)
+            
+            li $v0, 11
+            move $a0, $t5
+            syscall
+            addi $s4, $s4, 1
+            addi $t3, $t3, 1
+            j whilemenor20
+        
+
+
+exitPrueba:
+
+	li $v0, 10
+	syscall
 
 
 
