@@ -15,10 +15,10 @@ coma: .asciiz ","
 # Tenemos (20*1col + 4*8col)*16filas = 832 bytes
 
 .text
-
 .globl leerArchivo
 
 leerArchivo:
+
 
 #abrir archivo 
 li $v0, 13 #numero servicio para abrir archivo
@@ -32,10 +32,6 @@ li $v0, 14 # numero de servicio para leer archivo
 move $a0, $s0 #mover el addres a a0
 la $a1, buffer #poner el address del buffer en a1
 li $a2, 1024 #ubicar el tamaño max de la entrada
-syscall
-
-li $v0, 4
-la $a0, buffer
 syscall
 
 
@@ -169,83 +165,16 @@ whileComa:
 
 exit:
 
-
-
-
 #Cerrar el archivo
 li $v0, 16
 move $a0, $s0
 syscall
 
+move $a0, $s3
+jal obtenerMatrizComparable
 
-li $s1, 52 #longitud de la fila
-add $s4, $zero, $zero #i
-la $s2, matriz
-
-whilePrueba:
-    slti $t1, $s4, 832
-    bne $t1, $zero, recorrer
-    j exitPrueba
-
-    recorrer:
-
-        div $s4, $s1
-        mfhi $t2
-        bne $t2, 0, elsePrueba
-            jal RecorrerPalabra
-	    j whilePrueba
-        elsePrueba:
-            jal RecorrerNumero
-            j whilePrueba
-        
-            
-            
-            
-RecorrerNumero:
-
-    li $t2, 0
-    add $t2, $s2, $s4
-
-    lw $t3, 0($t2)
-
-    li $v0, 1
-    move $a0, $t3
-    syscall
-
-
-    addi $s4, $s4, 4
-
-    jr $ra
-
-
-
-
-RecorrerPalabra:
-
-    li $t3, 0 #j
-    whilemenor20:
-        slti $t4, $t3, 20
-        beq $t4, 1, imprimirChar
-            jr $ra
-
-        imprimirChar:
-            add $t5, $s2, $s4
-
-            lb $t5, 0($t5)
-            
-            li $v0, 11
-            move $a0, $t5
-            syscall
-            addi $s4, $s4, 1
-            addi $t3, $t3, 1
-            j whilemenor20
-        
-
-
-exitPrueba:
-
-	li $v0, 10
-	syscall
+li $v0, 10
+syscall
 
 
 
