@@ -1,3 +1,8 @@
+
+.text
+
+.globl findNombre
+
 findNombre:
     addi, $sp, $sp, -12
     sw $s0, 0($sp)
@@ -7,9 +12,12 @@ findNombre:
     #$a1 -> nombre
     move $s1, $a0
     add $s0, $zero, $zero #i
+    move $s2, $a2 
+    lb $s2, 0($s2) #salto Linea
+
     whileR2: 
         slti $t1, $s0, 832
-        beq $t1, 1, true:
+        beq $t1, 1, true
             addi $v0, $zero, -1 #return -1
             j exitFind
         true:
@@ -29,7 +37,7 @@ findNombre:
         lw $ra, 8($sp)
         addi, $sp, $sp, 8 
 
-        jr r$a
+        jr $ra
         
 
 
@@ -39,7 +47,7 @@ equalsNombre:
     add $t1, $zero, $zero #i
     whileMenor20:
         slti $t4, $t1, 20
-        beq $t4, 1, continuar:
+        beq $t4, 1, continuar
             li $v0 1
             jr $ra
             
@@ -48,7 +56,11 @@ equalsNombre:
             add $t3, $a1, $t1 #nombre[i]
             lb $t2, 0($t2)
             lb $t3, 0($t3)
-            bne $t2, $t3, diferentes:
+            bne $t3, $s2, contCompare
+            	li $t1, 20
+            	j whileMenor20
+            contCompare:
+            bne $t2, $t3, diferentes
                 addi $t1, $t1, 1
                 j whileMenor20
             diferentes:

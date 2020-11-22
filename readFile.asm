@@ -8,8 +8,7 @@ cantidades: .word 0
 
 matriz: .space 832
 
-saltoLinea: .asciiz "\n"
-coma: .asciiz ","
+
 
 #Los nombres de los equipos tendran 20 bytes de espacio y los valores numericos tendran 4 bytes 
 # Tenemos (20*1col + 4*8col)*16filas = 832 bytes
@@ -18,6 +17,20 @@ coma: .asciiz ","
 .globl leerArchivo
 
 leerArchivo:
+
+addi $sp, $sp, -28
+sw $s1, 0($sp)
+sw $s2, 4($sp)
+sw $s3, 8($sp)
+sw $s4, 12($sp)
+sw $s5, 16($sp)
+sw $s6, 20($sp)
+sw $ra, 24($sp)
+
+move $s1, $a0
+lb $s1, 0($s1)
+move $s2, $a1
+lb $s2, 0($s2)
 
 
 #abrir archivo 
@@ -39,10 +52,7 @@ syscall
 la $s0, buffer 
 
 
-la $s1, saltoLinea
-lb $s1, 0($s1)
-la $s2, coma
-lb $s2, 0($s2)
+
 la $s3, matriz
 
 li $s4, 3 #i
@@ -170,11 +180,19 @@ li $v0, 16
 move $a0, $s0
 syscall
 
-move $a0, $s3
-jal obtenerMatrizComparable
+la $v0, matriz
 
-li $v0, 10
-syscall
+lw $s1, 0($sp)
+lw $s2, 4($sp)
+lw $s3, 8($sp)
+lw $s4, 12($sp)
+lw $s5, 16($sp)
+lw $s6, 20($sp)
+lw $ra, 24($sp)
+addi $sp, $sp, 28
+
+jr $ra
+
 
 
 
