@@ -171,9 +171,7 @@ move $a0, $s0
 syscall
 
 move $a0, $s3
-move $a1, $s1
-move $a2, $s2
-jal imprimirTabla
+jal obtenerMatrizComparable
 
 li $v0, 10
 syscall
