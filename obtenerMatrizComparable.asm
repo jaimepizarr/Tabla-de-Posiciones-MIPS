@@ -1,6 +1,7 @@
 .data 
-matrizComparable: .space 192  
 .align 2
+matrizComparable: .space 192  
+
 
 .text
 
@@ -24,13 +25,15 @@ obtenerMatrizComparable:
         slti $t0, $s1,  832
         beq $t0, 1, llenarMatriz
             
+            move $v0, $s0 #return matrizComparable
+
             lw $s0, 0($sp)
             lw $s1, 4($sp)
             lw $s2, 8($sp)
             lw $ra, 12($sp)
             addi $sp, $sp, 16
 
-            move $v0, $s0 #return matrizComparable
+
             
             jr $ra 
         
