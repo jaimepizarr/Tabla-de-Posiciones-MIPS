@@ -23,6 +23,8 @@ main:
         jal showMenu
         move $a0, $v0
         jal validarNumero
+        move $a0, $v0
+        jal validarRango
         #verificando si es una operacion
         move $s1, $v0
         j whileMain
@@ -77,6 +79,33 @@ validarNumero:
             move $s0, $v0
             j whileValNum
 
+validarRango:
+# *usuario -> a0
+    addi $sp, $sp, -8
+    sw $ra, 0($sp)
+    sw $s0, 4($sp)
+    move $s0, $a0
+
+ 
+    whileOptionInvalid:
+        addi $t0, $zero, 1
+   	addi $t1, $zero, 4
+        blt $s0, $t0, noRangoValido
+        bgt $s0, $t1, noRangoValido
+
+    move $v0, $s0
+    lw $ra, 0($sp)
+    lw $s0, 4($sp)
+    addi $sp, $sp, 8
+    jr $ra
+        noRangoValido:
+            la $a0, merror
+            jal showMenu
+            move $a0, $v0
+            jal validarNumero
+            move $s0, $v0
+            j whileOptionInvalid
+
 isNumeric:
 # *usuario -> a0
 # i -> t0
@@ -124,6 +153,7 @@ isNumeric:
 	    addi $sp, $sp, 8
 	    
 	    jr $ra
+
 
 isVacioAndSalto:
 #a0 -> d
