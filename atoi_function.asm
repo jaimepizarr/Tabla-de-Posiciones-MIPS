@@ -1,6 +1,6 @@
 .text
 .globl atoi
-# Function that cast a str into a integer vaue
+# Funcion que recibe un numero en string y hace el cast a int
 
 atoi:
     or      $v0, $zero, $zero   # res = 0
