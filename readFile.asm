@@ -44,7 +44,7 @@ move $s0, $v0 #guardar la direccion en s0
 li $v0, 14 # numero de servicio para leer archivo
 move $a0, $s0 #mover el addres a a0
 la $a1, buffer #poner el address del buffer en a1
-li $a2, 1024 #ubicar el tamaño max de la entrada
+li $a2, 1024 #ubicar el tamaï¿½o max de la entrada
 syscall
 
 
