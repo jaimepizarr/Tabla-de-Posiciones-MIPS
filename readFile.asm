@@ -17,7 +17,8 @@ matriz: .space 832
 .globl leerArchivo
 
 leerArchivo:
-
+#$a0, "\n"
+#$a1, ","
 addi $sp, $sp, -28
 sw $s1, 0($sp)
 sw $s2, 4($sp)

@@ -4,6 +4,7 @@ bienvenida: .asciiz "Bienvenido al menu de partidos, por favor ingrese el numero
 merror: .asciiz "Ingrese una opcion valida del 1 al 3: \n"
 gracias: .asciiz "Gracias, regrese pronto \n"
 saltoLinea: .asciiz "\n"
+coma: .asciiz ","
 opcionSort: .asciiz "1. Mostrar la tabla ordenada\n"
 opcionInput: .asciiz "2. Ingresos de partidos\n"
 opcionSlice: .asciiz "3. Mostrar los 3 mejores\n"
@@ -13,8 +14,16 @@ opcionSalida: .asciiz "4. Salir\n"
 main:
     # *usuario -> $s0
     # usuario -> $s1
+    # matriz -> $s2
+    # coma -> $s3
+    # saltoLinea -> $s4
+
     li $s1, 1
     whileMain:
+        la $a0, saltoLinea
+        la $a1, coma 
+        jal leerArchivo
+        move $s2, $v0
         bne $s1, 4, presentarMenu
         j exitMain
 
@@ -25,9 +34,34 @@ main:
         jal validarNumero
         move $a0, $v0
         jal validarRango
-        #verificando si es una operacion
+        #verificando si es una opcion
         move $s1, $v0
+        beq $s1, 1, opMostrarTabla
+        beq $s1, 2, opPartidos
+        beq $s1, 3, opMostrar3Mejores
+        beq $s1, 4, exitMain
+        opMostrarTabla:
+            move $a0, $s2
+            la $t1, saltoLinea
+            lb $a1, 0($t1)
+            la $t2, coma
+            lb $a2, 0($t2)
+            jal imprimirTabla
+            la $t1, saltoLinea
+            lb $a0, 0($t1)
+            li $v0, 11
+            syscall
+            j whileMain
+        opPartidos:
+        move $a0, $s2
+        jal ingresarPartido
+            
         j whileMain
+        opMostrar3Mejores:
+            move $a0, $s2
+            li $a1, 3
+            jal getBestTeams
+            j whileMain
 
 showMenu:
     li $v0, 4
