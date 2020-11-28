@@ -17,8 +17,8 @@ selectionSort:
     add $s2, $zero, 0 #iFila
 
     whileMenor15:
-        li $t1, 15
-        bgt $s2, $t1, endSelectionSort
+        slti $t1, $s2, 15
+        bne $t1, 1, endSelectionSort
             move $a0, $s1
             move $a1, $s2
             jal filaMayor
@@ -27,6 +27,11 @@ selectionSort:
             move $a1, $s3
             move $a2, $s0
             jal swap
+            move $a0, $s2
+            move $a1, $s3
+            move $a2, $s1
+            jal swapMComp
+
             addi $s2, $s2, 1
             j whileMenor15
     
@@ -57,8 +62,9 @@ filaMayor:
     move $s1, $a1 #iMax
     addi $s2, $s1, 1 # i = lower+1
     whileIMenor16:
-        li $t0, 15
-        bgt $s2, $t0, endFilaMenor
+        slti $t0, $s2, 16
+        bne $t0, 1, endFilaMenor
+        
         li $t0, 12
         mul $t1 ,$s2, $t0 #12*i
         add $a0, $t1, $s0 #A0 matrizComp[i]

@@ -8,6 +8,7 @@ golesVisita: .space 4
 bienvenida: .asciiz "Bienvenido al menu de partidos, por favor ingrese el numero de la opcion que desea: \n"
 merror: .asciiz "Ingrese una opcion valida del 1 al 3: \n"
 merrorNumeric: .asciiz "Ingrese un valor numerico \n"
+merrorNombre: .asciiz "El nombre de equipo es incorrecto, escriba uno de los mencionados a continuación: \n"
 gracias: .asciiz "Gracias, regrese pronto \n"
 saltoLinea: .asciiz "\n"
 coma: .asciiz ","
@@ -134,10 +135,16 @@ ingresarPartido:
             jal findNombre #Ir a buscar fila del equipo Local
             move $s1, $v0
 
-            bne $s1, -1,  PedirVisita #Validar si el equipo existÃ­a
+            bne $s1, -1,  PedirVisita #Validar si el equipo existe
+                
+                li $v0, 4
+                la $a0, merrorNombre
+                syscall
+                
                 move $a0, $s0 
                 li $a1, 16
                 jal getBestTeams #Mostrar todos los equipos disponibles
+                
                 j PedirLocal #Volver a pedir el equipo local
 
         PedirVisita:
