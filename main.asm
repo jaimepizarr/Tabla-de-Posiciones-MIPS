@@ -1,7 +1,13 @@
 .data
 usuario: .space 2
+equipoLocal: .space 20
+equipoVisitante: .space 20
+golesLocal: .space 4
+golesVisita: .space 4
+
 bienvenida: .asciiz "Bienvenido al menu de partidos, por favor ingrese el numero de la opcion que desea: \n"
 merror: .asciiz "Ingrese una opcion valida del 1 al 3: \n"
+merrorNumeric: .asciiz "Ingrese un valor numerico \n"
 gracias: .asciiz "Gracias, regrese pronto \n"
 saltoLinea: .asciiz "\n"
 coma: .asciiz ","
@@ -9,6 +15,11 @@ opcionSort: .asciiz "1. Mostrar la tabla ordenada\n"
 opcionInput: .asciiz "2. Ingresos de partidos\n"
 opcionSlice: .asciiz "3. Mostrar los 3 mejores\n"
 opcionSalida: .asciiz "4. Salir\n"
+opcionEquipoLocal: .asciiz "Ingrese el equipo Local: \n"
+opcionEquipoVisita: .asciiz "Ingrese el equipo Visitante: \n"
+entryGolLocal: .asciiz "Ingrese los goles del Equipo Local: \n"
+entryGolVisit: .asciiz "Ingrese los goles del Equipo Visitante: \n"
+
 
 .text 
 main:
@@ -19,11 +30,13 @@ main:
     # saltoLinea -> $s4
 
     li $s1, 1
+    la $a0, saltoLinea
+    la $a1, coma 
+    jal leerArchivo
+    move $s2, $v0 #matriz
+
     whileMain:
-        la $a0, saltoLinea
-        la $a1, coma 
-        jal leerArchivo
-        move $s2, $v0
+
         bne $s1, 4, presentarMenu
         j exitMain
 
@@ -86,7 +99,136 @@ showMenu:
     move $v0, $t0
     jr $ra
 
+ingresarPartido:
+        #s1: fila_Local*
+        #s2: fila_Visita*
+        #s3: goles local
+        #s4: goles Visita
+        #a0: matriz
+        addi $sp, $sp, -24
+        sw $ra, 0($sp) #guardamos la direccion del return
+        sw $s0, 4($sp)
+        sw $s1, 8($sp)
+        sw $s2, 12($sp)
+        sw $s3, 16($sp)
+        sw $s4, 20($sp)
 
+        move $s0, $a0
+
+        PedirLocal:
+            la $a0, opcionEquipoLocal #Pedir Equipo Local
+            li $v0, 4
+            syscall 
+
+            la $a0, equipoLocal #Entry Equipo Local
+            li $a1, 20
+            li $v0, 8
+            syscall
+
+            move $a0, $s0
+            la $a1, equipoLocal
+            la $a2, saltoLinea
+            jal findNombre #Ir a buscar fila del equipo Local
+            move $s1, $v0
+
+            bne $s1, -1,  PedirVisita #Validar si el equipo existía
+                move $a0, $s0 
+                li $a1, 16
+                jal getBestTeams #Mostrar todos los equipos disponibles
+                j PedirLocal #Volver a pedir el equipo local
+
+        PedirVisita:
+            la $a0, opcionEquipoVisita #Pedir Equipo Visitante
+            li $v0, 4
+            syscall
+
+            la $a0, equipoVisitante #Entry Equipo Visita
+            li $a1, 20
+            li $v0, 8
+            syscall
+
+            move $a0, $s0
+            la $a1, equipoVisitante
+            la $a2, saltoLinea
+            jal findNombre #Buscar fila equipo Visita
+            move $s2, $v0
+
+            bne $s2, -1, PedirGolesLocal #Validar si equipo existia
+                move $a0, $s0
+                li $a1, 16
+                jal getBestTeams #Mostrar todos los equipos disponibles
+                j PedirVisita #Volver a pedir equipo Visita
+
+        PedirGolesLocal:
+            #Pedir Goles local
+            la $a0, entryGolLocal
+            li $v0, 4
+            syscall
+
+            #Entrada Goles Local
+            la $a0, golesLocal
+            li $a1, 4
+            li $v0, 8
+            syscall
+
+            la $a0, golesLocal
+            jal isNumeric #Validar si la entrada es numerica
+            move $t4, $v0
+            bne $t4, 0, convertGolesLoc 
+
+                la $a0, merrorNumeric #mostrar mensaje de error
+                li $v0, 4
+                syscall
+                j PedirGolesLocal #Volver a pedir Goles
+
+            convertGolesLoc:
+                la $a0, golesLocal
+                jal atoi #Cast a int
+                move $s3, $v0 #t2-> goles Local
+        
+        PedirGolesVisita:
+            #Pedir Goles Visita
+            la $a0, entryGolVisit
+            li $v0, 4
+            syscall
+
+            #Entrada Goles Local
+            la $a0, golesVisita
+            li $a1, 4
+            li $v0, 8
+            syscall
+
+            la $a0, golesVisita
+            jal isNumeric #validar si la entrada es numerica
+            move $t4, $v0
+            bne $t4, 0, convertGolesVisit 
+
+                la $a0, merrorNumeric  #Mostrar msje Error
+                li $v0, 4
+                syscall
+                j PedirGolesVisita #volver a pedir goles Visita
+
+            convertGolesVisit:
+                la $a0, golesVisita
+                jal atoi #Cast a int 
+                move $s4, $v0 #t3 -> goles Visita
+
+            move $a0, $s1
+            move $a1, $s2
+            move $a2, $s3
+            move $a3, $s4
+            jal actualizarEquipo #Actualizar datos tabla
+
+            #Mandar a ordenar la tabla
+            
+            lw $ra, 0($sp)
+            lw $s0, 4($sp)
+            lw $s1, 8($sp)
+            lw $s2, 12($sp)
+            lw $s3, 16($sp)
+            lw $s4, 20($sp)
+            addi $sp, $sp, 24    
+            jr $ra	# jump to $ra
 
 validarNumero:
 # *usuario -> $s0
