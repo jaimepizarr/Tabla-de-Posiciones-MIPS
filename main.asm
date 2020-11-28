@@ -164,6 +164,10 @@ ingresarPartido:
             move $s2, $v0
 
             bne $s2, -1, PedirGolesLocal #Validar si equipo existia
+            	li $v0, 4
+                la $a0, merrorNombre
+                syscall
+            	
                 move $a0, $s0
                 li $a1, 16
                 jal getBestTeams #Mostrar todos los equipos disponibles
