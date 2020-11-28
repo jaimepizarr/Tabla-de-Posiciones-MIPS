@@ -26,7 +26,6 @@ main:
     # *usuario -> $s0
     # usuario -> $s1
     # matriz -> $s2
-    # coma -> $s3
     # saltoLinea -> $s4
 
     li $s1, 1
@@ -34,9 +33,13 @@ main:
     la $a1, coma 
     jal leerArchivo
     move $s2, $v0 #matriz
-
     whileMain:
-
+        move $a0, $s2
+        jal obtenerMatrizComparable
+        move $s3, $v0 #matrizComparable 
+        move $a0, $s2 #matriz
+        move $a1, $s3
+        jal selectionSort
         bne $s1, 4, presentarMenu
         j exitMain
 

@@ -40,15 +40,15 @@ obtenerMatrizComparable:
         llenarMatriz:
 
             li $a1, 20
-            li $a2, 1
+            li $a2, 0
             jal llenarCeldaMC
 
             li $a1, 48
-            li $a2, 2
+            li $a2, 1
             jal llenarCeldaMC
 
             li $a1, 40
-            li $a2, 3
+            li $a2, 2
             jal llenarCeldaMC
 
             addi $s1, $s1, 52

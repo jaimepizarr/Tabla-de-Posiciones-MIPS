@@ -10,8 +10,8 @@ comparator:
     addi $sp, $sp, -4
     sw $s0, 0($sp)
     
-    li $s0, 1 #i=0
-    whileMenor3:
+    li $s0, 0 #i=0
+    whileMenor3:    
         slti $t0, $s0, 3 #i<3
         bne $t0, 1, sonIguales
 
